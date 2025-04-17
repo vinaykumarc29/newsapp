@@ -1,9 +1,20 @@
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import Newsitem from './Newsitem'
 import LoadingCardAnimation from './LoadingCardAnimation';
 
 export default class News extends Component {
+
+    static  propTypes = {
+        country:PropTypes.string,
+        category: PropTypes.string,
+    }
+
+    static  defaultProps ={
+        country:"in",
+        category:""
+    }
+    
 
 
     constructor() {
@@ -16,7 +27,8 @@ export default class News extends Component {
     }
     async componentDidMount() {
         this.setState({ isLoading: true })
-        let url = "https://newsdata.io/api/1/latest?apikey=pub_80635608c807eb702e3e5914a2ea124647bb8&language=en&country=in";
+        let Api_url_req =`https://newsdata.io/api/1/latest?apikey=pub_80635608c807eb702e3e5914a2ea124647bb8&language=en&country=${this.props.country}`;
+        let url = (this.props.category === "")? Api_url_req :  Api_url_req + `&category=${this.props.category}`;
         let data = await fetch(url);
         let parsed_data = await data.json();
         this.setState({
@@ -28,14 +40,14 @@ export default class News extends Component {
 
     handleNextpage = async () => {
         this.setState({ isLoading: true })
-        let url = `https://newsdata.io/api/1/latest?apikey=pub_80635608c807eb702e3e5914a2ea124647bb8&language=en&country=in&page=${this.state.page_no}`;
+        let Api_url_req = `https://newsdata.io/api/1/latest?apikey=pub_80635608c807eb702e3e5914a2ea124647bb8&language=en&country=${this.props.country}&page=${this.state.page_no}`;
+        let url = (this.props.category === "")? Api_url_req :  Api_url_req + `&category=${this.props.category}`;
         let data = await fetch(url);
         let parsed_data = await data.json();
         this.setState({
             articles: parsed_data.results,
             page_no: parsed_data.nextPage,
             isLoading: false
-
         });
 
     }
