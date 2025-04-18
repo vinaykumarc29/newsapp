@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { Component } from 'react'
 import Newsitem from './Newsitem'
 import LoadingCardAnimation from './LoadingCardAnimation';
@@ -21,38 +22,59 @@ export default class News extends Component {
         this.state = {
             articles: [],
             page_no: null,
-            isLoading: false
+            isLoading: false,
+            hasMore: true,
         }
     }
-    async ApiCalling(api_key){
-        this.setState({ isLoading: true })
-        let Api_url_req =api_key;
+    async fetchnews(api_key){
+        if(this.state.isLoading) return;
+
+        this.setState({ isLoading: true });
+
+        let Api_url_req = api_key;
         let url = (this.props.category === "")? Api_url_req :  Api_url_req + `&category=${this.props.category}`;
+        
+
         let data = await fetch(url);
         let parsed_data = await data.json();
-        console.log(parsed_data)
+
+        console.log(this.state.articles.length);
+        console.log(this.state.hasMore);
+
+
         this.setState({
-            articles: parsed_data.results,
+            articles: this.state.articles.concat(parsed_data.results),
             page_no: parsed_data.nextPage,
-            isLoading: false
+            isLoading: false,
+            hasMore: this.state.articles.length < 30 ,
         });
 
 
     } 
+
     async componentDidMount() {
-        this.ApiCalling( BASE_URL +  `&country=${this.props.country}`);
+        this.fetchnews(BASE_URL + `&country=${this.props.country}`);
         
     }
 
-    handleNextpage = async () => {
-       this.ApiCalling( BASE_URL +  `&country=${this.props.country}&page=${this.state.page_no}`);
-
-    }
     render() {
         return (
-            (!this.state.isLoading) ?
-                (<div className="container my-3 ">
+           
+                <div className="container my-3 ">
                     <h3 className='text-center my-3'>{(this.props.category)?`Top ${(this.props.category).replace(/^./, char => char.toUpperCase())} HeadLines  `: "NewsOne - HeadLines" }</h3>
+                    
+                    <InfiniteScroll
+                        dataLength={this.state.articles.length}
+                        next={()=> this.fetchnews(BASE_URL +`&country=${this.props.country}&page=${this.state.page_no}`)}
+                        inverse={false} 
+                        hasMore={this.state.hasMore}
+                        endMessage={
+                            <p className="text-center my-3" >
+                              <b>Yay! You have seen it all 🎉</b>
+                            </p>
+                          }
+                    >
+
                     <div className="row">
                         {this.state.articles.map((article) => (
                             <div className="col-md-4" key={article.article_id}>
@@ -60,19 +82,11 @@ export default class News extends Component {
                             </div>
                         ))}
                     </div>
-                    <div className="container d-flex justify-content-end">
-                        <nav aria-label="Page navigation example">
-                            <ul className="pagination">
-                                <li className="page-item "><button className="page-link text-dark" onClick={this.handleNextpage}>Next&rarr;</button></li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>) : (
-                    <>
-                    <LoadingCardAnimation />
-                    </>
-                )
-
+                    </InfiniteScroll>
+                    
+             {this.state.isLoading && <LoadingCardAnimation />}    
+        </div>
+           
         )
     }
 }
