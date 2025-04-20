@@ -1,16 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 
-const  Navbar = ()=> {
-  // const handlechangemode = ()=>{
-  //   props.changemode();
-  // }
+const  Navbar = (props)=> {
+  const handlechangemode = ()=>{
+    props.changemode();
+  }
   
 
     return (
       <>
-        <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary" >
-  <div className="container-fluid">
+        <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary" data-bs-theme={props.mode} >
+  <div className="container-fluid" >
     <Link to="/" className="navbar-brand">News One</Link>
 
     {/* Offcanvas toggler button */}
@@ -57,10 +57,10 @@ const  Navbar = ()=> {
             <Link to="/world" className="nav-link">World</Link>
           </li>
         </ul>
-        {/* <input type="checkbox" className="btn-check" id="btn-check-outlined" onClick={handlechangemode} autoComplete="off" />
+        <input type="checkbox" className="btn-check" id="btn-check-outlined" onClick={handlechangemode} autoComplete="off" />
           <label className="btn btn-outline-primary" htmlFor="btn-check-outlined" >
             <i className="fa-solid fa-moon"></i>
-          </label>       */}
+          </label>      
         </div>
     </div>
   </div>

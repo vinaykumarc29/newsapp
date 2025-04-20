@@ -87,7 +87,7 @@ const News =(props)=> {
     
         return (
            
-                <div className="container-fluid my-3 px-3" >
+                <div className="container-fluid my-3 px-3" data-bs-theme={props.mode}>
                     <h3 className='text-center my-3'>{(props.category)?`Top ${(props.category).replace(/^./, char => char.toUpperCase())} HeadLines  `: "NewsOne - HeadLines" }</h3>
                     
                     <InfiniteScroll
