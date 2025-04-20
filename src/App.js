@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Navbar from './components/Navbar';
 import News from './components/News';
 import LoadingBar from "react-top-loading-bar";
@@ -12,29 +12,31 @@ const  App =()=> {
   const apikey = process.env.REACT_APP_NEWS_API_KEY
 
   const [progress,setprogress] = useState(0);
-  const [mode,setmode] =useState("light");
+  const [mode,setmode] =useState(() => localStorage.getItem("theme") || "light");
 
-  // state= {
-  //   progress:0
-  // };
+  
 
   const setProgress = (progress)=>{
     setprogress(progress)
-    // setState({progress:progress});
   };
 
   const changemode=()=>{
-    if(mode === "light"){
-      document.body.classList.add("bg-dark");
-      document.body.classList.remove("bg-light");
+    const newmode = mode ==="light"?"dark":"light";
+    setmode(newmode);
+    localStorage.setItem("theme",newmode);
+  }
 
-      setmode("dark");
-    }else{
+  useEffect(()=>{
+    if(mode === "light"){
       document.body.classList.add("bg-light");
       document.body.classList.remove("bg-dark");
-      setmode("light");
+    }else{
+      document.body.classList.add("bg-dark");
+      document.body.classList.remove("bg-light");
+      
     }
-  }
+    
+  },[mode])
 
 
   
