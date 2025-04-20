@@ -1,84 +1,100 @@
 import PropTypes from 'prop-types'
 import InfiniteScroll from 'react-infinite-scroll-component';
-import React, { Component } from 'react'
+import React,{useState,useEffect} from 'react'
 import Newsitem from './Newsitem'
 import LoadingCardAnimation from './LoadingCardAnimation';
 
 // const BASE_URL = `https://newsdata.io/api/1/latest?apikey=${this.props.apikey}&language=en`;
 
 
+const News =(props)=> {
 
+   const [articles,setarticles] = useState([]);
+   const [page_no,setpage_no] = useState(null);
+   const [isLoading,setisLoading] = useState(false);
+   const [hasMore,sethasMore] = useState(true);
 
-
-export default class News extends Component {
-    
-    static  propTypes = {
-        country:PropTypes.string,
-        category: PropTypes.string,
-        apikey: PropTypes.string.isRequired,
-    }
-    
-    static  defaultProps ={
-        country:"in",
-        category:""
-    }
-    constructor() {
-        super();
-        this.state = {
-            articles: [],
-            page_no: null,
-            isLoading: false,
-            hasMore: true,
-        }
+    // constructor() {
+    //     super();
+    //     this.state = {
+    //         articles: [],
+    //         page_no: null,
+    //         isLoading: false,
+    //         hasMore: true,
+    //     }
        
-    }
-    async fetchnews(url){
-        if(this.state.isLoading) return;
+    // }
+    const fetchnews = async(url)=>{
+
+        if(isLoading) return;
         
-        this.setState({ isLoading: true });
-        this.props.progress(30);
+        setisLoading(true);
+        
+        props.progress(30);
         // let Api_url_req = api_key;
-        url = (this.props.category === "")? url:  url + `&category=${this.props.category}`;
+        url = (props.category === "")? url :  url + `&category=${props.category}`;
         
         
+        try {
+            
+            
+            let data = await fetch(url);
+            
+            if(!data.ok){
+                throw new Error(`Http Error ${data.status}:${data.statusText}`)
+            }
+            let parsed_data = await data.json();
+            
+            
+            
+            
+            
+            props.progress(100);
+            setarticles(articles.concat(parsed_data.results));
+            setpage_no(parsed_data.nextPage);
+            setisLoading(false);
+            sethasMore(articles.length < 30)
+        }catch (error) {
+            document.body.innerText =` ${error}`
+        }
+
+
+
+
+
+        console.log(articles.length);
+        console.log(hasMore);
         
-        let data = await fetch(url);
-        let parsed_data = await data.json();
-        
-        
-        
-        
-        // console.log(this.state.articles.length);
-        // console.log(this.state.hasMore);
-        
-        this.props.progress(100);
-        
-        this.setState({
-            articles: this.state.articles.concat(parsed_data.results),
-            page_no: parsed_data.nextPage,
-            isLoading: false,
-            hasMore: this.state.articles.length < 30 ,
-        });
+        // this.setState({
+            //     articles: this.state.parsed_data.results,
+        //     page_no: parsed_data.nextPage,
+        //     isLoading: false,
+        //     hasMore: this.state.articles.length < 30 ,
+        // });
         
         
     } 
     
-    async componentDidMount() {
-        this.fetchnews(`https://newsdata.io/api/1/latest?apikey=${this.props.apikey}&language=en&country=${this.props.country}`);
-        
-    }
+    useEffect(()=>{
+        fetchnews(`https://newsdata.io/api/1/latest?apikey=${props.apikey}&language=en&country=${props.country}`,[]);
+    },[])
 
-    render() {
+
+    // async componentDidMount() {
+        
+    // }
+
+    
         return (
            
-                <div className="container my-3 ">
-                    <h3 className='text-center my-3'>{(this.props.category)?`Top ${(this.props.category).replace(/^./, char => char.toUpperCase())} HeadLines  `: "NewsOne - HeadLines" }</h3>
+                <div className="container-fluid my-3 px-3" >
+                    <h3 className='text-center my-3'>{(props.category)?`Top ${(props.category).replace(/^./, char => char.toUpperCase())} HeadLines  `: "NewsOne - HeadLines" }</h3>
                     
                     <InfiniteScroll
-                        dataLength={this.state.articles.length}
-                        next={()=> this.fetchnews(`https://newsdata.io/api/1/latest?apikey=${this.props.apikey}&language=en&country=${this.props.country}&page=${this.state.page_no}`)}
+                        dataLength={articles.length}
+                        next={()=>fetchnews(`https://newsdata.io/api/1/latest?apikey=${props.apikey}&language=en&country=${props.country}&page=${page_no}`)}
                         inverse={false} 
-                        hasMore={this.state.hasMore}
+                        hasMore={hasMore}
                         endMessage={
                             <p className="text-center my-3" >
                               <b>Yay! You have seen it all 🎉</b>
@@ -87,17 +103,32 @@ export default class News extends Component {
                     >
 
                     <div className="row">
-                        {this.state.articles.map((article) => (
-                            <div className="col-md-4" key={article.article_id}>
-                                <Newsitem title={article.title} imageUrl={article.image_url} desc={article.description ? article.description.slice(0, 88) : " "} newsUrl={article.link} author={article.creator} date={article.pubDate} publisher={article.source_name} />
+                        {articles.map((article) => (
+                            <div className="col-12 col-sm-6 col-md-4 mb-4" key={article.article_id}>
+                                <Newsitem mode={props.mode} title={article.title} imageUrl={article.image_url} desc={article.description ? article.description.slice(0, 88) : " "} newsUrl={article.link} author={article.creator} date={article.pubDate} publisher={article.source_name} />
                             </div>
                         ))}
                     </div>
                     </InfiniteScroll>
                     
-             {this.state.isLoading && <LoadingCardAnimation />}    
+             {isLoading && <LoadingCardAnimation />}    
         </div>
            
         )
     }
+
+
+News.propTypes = {
+    country:PropTypes.string,
+    category: PropTypes.string,
+    apikey: PropTypes.string.isRequired,
+    mode: PropTypes.string.isRequired
 }
+
+News.defaultProps ={
+    country:"in",
+    category:""
+}
+
+
+export default News

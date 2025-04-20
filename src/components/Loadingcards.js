@@ -1,7 +1,6 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-export default class Loadingcards extends Component {
-  render() {
+const Loadingcards = ()=> {
     return (
         <>
        
@@ -23,4 +22,5 @@ export default class Loadingcards extends Component {
       
       </>
   )}
-}
+
+  export default Loadingcards

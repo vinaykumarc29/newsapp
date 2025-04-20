@@ -1,13 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
-export default class Newsitem extends Component {
+const Newsitem = (props)=> {
   
   
-  render() {
-    let {title, imageUrl,desc,newsUrl,author,date,publisher} = this.props;
+    let {title, imageUrl,desc,newsUrl,author,date,publisher} = props;
     return (
-      <div className="card my-3  "  style={{width: "18rem"}}>
+      <div className="card my-3 " data-bs-theme={props.mode}  style={{width: "18rem"}}>
         <span className="position-absolute top-0  translate-middle badge rounded-pill bg-danger" style={{left:"96%",zindex:"1"}}>
           {publisher}
             </span>
@@ -25,4 +24,5 @@ export default class Newsitem extends Component {
       </div>
     );
   }
-}
+
+export default Newsitem

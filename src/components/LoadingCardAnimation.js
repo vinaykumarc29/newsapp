@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Loadingcards from './Loadingcards'
 
-export default class LoadingCardAnimation extends Component {
-  render() {
+const LoadingCardAnimation = ()=> {
     return (
       <>
        <div className="container d-flex justify-content-row">
@@ -27,4 +26,6 @@ export default class LoadingCardAnimation extends Component {
       </>
     )
   }
-}
+
+  export default LoadingCardAnimation
+
