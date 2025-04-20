@@ -13,6 +13,8 @@ const  Navbar = (props)=> {
   <div className="container-fluid" >
     <Link to="/" className="navbar-brand">News One</Link>
 
+    
+
     {/* Offcanvas toggler button */}
     <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
       <span className="navbar-toggler-icon"></span>
@@ -24,8 +26,16 @@ const  Navbar = (props)=> {
         <h5 className="offcanvas-title" id="offcanvasNavbarLabel">Categories</h5>
         <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
+
+
       <div className="offcanvas-body">
         <ul className="navbar-nav nav-underline  flex-grow-1 pe-3">
+
+        <input type="checkbox" className="btn-check " id="btn-check-outlined" onClick={handlechangemode} autoComplete="off" />
+          <label className="btn btn-outline-primary" htmlFor="btn-check-outlined" >
+            <i className="fa-solid fa-moon"></i>
+          </label>
+
           <li className="nav-item">
             <Link to="/" className="nav-link" aria-current="page">Home</Link>
           </li>
@@ -57,10 +67,9 @@ const  Navbar = (props)=> {
             <Link to="/world" className="nav-link">World</Link>
           </li>
         </ul>
-        <input type="checkbox" className="btn-check" id="btn-check-outlined" onClick={handlechangemode} autoComplete="off" />
-          <label className="btn btn-outline-primary" htmlFor="btn-check-outlined" >
-            <i className="fa-solid fa-moon"></i>
-          </label>      
+
+         
+            
         </div>
     </div>
   </div>
