@@ -1,4 +1,7 @@
 import React from 'react'
+//BootStrap loading card 
+// This component is used to display a loading animation for the news cards
+// It uses the Loadingcards component to create multiple loading cards
 
 const Loadingcards = ()=> {
     return (
